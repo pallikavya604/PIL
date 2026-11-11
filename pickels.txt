@@ -1,0 +1,99 @@
+import pickle
+
+data = {
+    "Name": ["Anil", "Meena", "Kiran"],
+    "Marks": [72, 88, 91]
+}
+
+with open("sample.pkl", "wb") as file:
+    pickle.dump(data, file)
+
+with open("sample.pkl", "rb") as file:
+    result = pickle.load(file)
+
+print("Pickle File Data:")
+print(result) 
+from PIL import Image, ImageDraw
+import matplotlib.pyplot as plt
+import math
+
+# Create a white canvas
+img = Image.new("RGB", (300, 300), "white")
+draw = ImageDraw.Draw(img)
+
+# Star settings: center (cx, cy) and outer radius r
+cx, cy, r = 150, 155, 120
+
+# Calculate the 10 points (alternating outer and inner)
+points = []
+for i in range(10):
+    angle = math.radians(-90 + i * 36)
+    radius = r if i % 2 == 0 else r * 0.4
+    x = cx + radius * math.cos(angle)
+    y = cy + radius * math.sin(angle)
+    points.append((x, y))
+
+# Draw the star
+draw.polygon(points, fill="gold", outline="black", width=4)
+
+# Save the image
+img.save("star_symbol.png")
+
+# Read the saved image and print its details
+image = Image.open("star_symbol.png")
+print("Image Format:", image.format)
+print("Image Size:", image.size)
+print("Image Mode:", image.mode)
+
+# Display the image
+plt.imshow(image)
+plt.axis("off")
+plt.show()
+
+import glob
+import pandas as pd
+
+data1 = {"Name": ["Anil", "Meena"], "Marks": [72, 88]}
+data2 = {"Name": ["Kiran", "Priya"], "Marks": [91, 79]}
+
+pd.DataFrame(data1).to_csv("students1.csv", index=False)
+pd.DataFrame(data2).to_csv("students2.csv", index=False)
+
+files = glob.glob("*.csv")
+
+for file in files:
+    print("\nFile Name:", file)
+    df = pd.read_csv(file)
+    print(df)      
+
+import sqlite3
+import pandas as pd
+
+conn = sqlite3.connect("college.db")
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Student (
+    ID INTEGER,
+    Name TEXT,
+    Marks INTEGER
+)
+""")
+
+cursor.execute("DELETE FROM Student")
+
+cursor.executemany(
+    "INSERT INTO Student VALUES (?, ?, ?)",
+    [(1, "Anil", 72),
+     (2, "Meena", 88),
+     (3, "Kiran", 91)]
+)
+
+conn.commit()
+
+df = pd.read_sql_query("SELECT * FROM Student", conn)
+
+print("Database Records:")
+print(df)
+
+conn.close()
